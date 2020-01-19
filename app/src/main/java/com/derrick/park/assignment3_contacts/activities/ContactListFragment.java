@@ -1,6 +1,7 @@
 package com.derrick.park.assignment3_contacts.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -18,10 +19,14 @@ import com.derrick.park.assignment3_contacts.models.ContactList;
 import com.derrick.park.assignment3_contacts.network.ContactClient;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,10 +69,9 @@ public class ContactListFragment extends Fragment {
               String cell = intent.getStringExtra(ContactListActivity.EXTRA_CONTACT_CELL);
 
               if (name != null && cell != null) {
-                String[] splitedName = name.split(" ");
-                String first = splitedName[0];
-                String last = splitedName[1];
-                Contact contact = new Contact(first, last, cell);
+                String firstName = name.substring(0, name.indexOf(" "));
+                String lastName = name.substring(name.indexOf(" ") + 1);
+                Contact contact = new Contact(firstName, lastName, cell);
                 mContactList.add(contact);
               }
               updateUI();
@@ -115,6 +119,15 @@ public class ContactListFragment extends Fragment {
   }
 
   private void updateUI() {
+
+    Collections.sort(
+        mContactList,
+        new Comparator<Contact>() {
+          @Override
+          public int compare(Contact c1, Contact c2) {
+            return ("" + c1.getName()).compareTo("" + c2.getName());
+          }
+        });
 
     if (mAdapter == null) {
       mAdapter = new ContactAdapter(mContactList);
