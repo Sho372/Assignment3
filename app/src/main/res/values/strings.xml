@@ -1,6 +1,10 @@
 <resources>
-    <string name="app_name">Assignment3-Contacts</string>
+    <string name="app_name">Contacts</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_contact">Add contact</string>
+    <string name="contact_name_hint">Name</string>
+    <string name="contact_phone_hint">Phone</string>
+    <string name="contact_add_button_text">SUBMIT</string>
 </resources>

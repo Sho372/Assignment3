@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.ContactActivity"></activity>
+        <activity
+            android:name=".activities.ContactAddActivity"
+            android:parentActivityName=".activities.ContactListActivity"></activity>
         <activity android:name=".activities.ContactListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

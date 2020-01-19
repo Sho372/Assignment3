@@ -23,6 +23,7 @@ import retrofit2.Response;
 public class ContactFragment extends Fragment {
 
   private ArrayList<Contact> mContactList;
+  
   public static final String TAG = ContactFragment.class.getSimpleName();
 
   @Override

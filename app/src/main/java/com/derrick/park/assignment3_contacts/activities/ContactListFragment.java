@@ -1,8 +1,13 @@
 package com.derrick.park.assignment3_contacts.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -28,13 +33,17 @@ public class ContactListFragment extends Fragment {
 
   private RecyclerView mContactRecycleView;
   private ContactAdapter mAdapter;
-  private ArrayList<Contact> mContactList;
+  // Temporally database
+  private static ArrayList<Contact> mContactList;
 
   public static final String TAG = ContactListFragment.class.getSimpleName();
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    Log.d(TAG, "onCreate() called");
     super.onCreate(savedInstanceState);
+    setHasOptionsMenu(true);
+
     Call<ContactList> call = ContactClient.getContacts(10);
 
     call.enqueue(
@@ -42,10 +51,24 @@ public class ContactListFragment extends Fragment {
           @Override
           public void onResponse(Call<ContactList> call, Response<ContactList> response) {
             if (response.isSuccessful()) {
-              mContactList = response.body().getContactList();
+              if (mContactList == null) {
+                mContactList = response.body().getContactList();
+              }
               for (Contact contact : mContactList) {
                 Log.d(TAG, "onResponse: " + mContactList.size());
                 Log.d(TAG, "onResponse: " + contact);
+              }
+
+              Intent intent = getActivity().getIntent();
+              String name = intent.getStringExtra(ContactListActivity.EXTRA_CONTACT_NAME);
+              String cell = intent.getStringExtra(ContactListActivity.EXTRA_CONTACT_CELL);
+
+              if (name != null && cell != null) {
+                String[] splitedName = name.split(" ");
+                String first = splitedName[0];
+                String last = splitedName[1];
+                Contact contact = new Contact(first, last, cell);
+                mContactList.add(contact);
               }
               updateUI();
             }
@@ -73,30 +96,53 @@ public class ContactListFragment extends Fragment {
     return view;
   }
 
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
+    inflater.inflate(R.menu.fragment_contact_list, menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.add_contact:
+        // getActivity -> hosting activity as the context object
+        Intent intent = new Intent(getActivity(), ContactAddActivity.class);
+        startActivity(intent);
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+
   private void updateUI() {
-    mAdapter = new ContactAdapter(mContactList);
-    mContactRecycleView.setAdapter(mAdapter);
+
+    if (mAdapter == null) {
+      mAdapter = new ContactAdapter(mContactList);
+      mContactRecycleView.setAdapter(mAdapter);
+    } else {
+      mAdapter.notifyDataSetChanged();
+    }
   }
 
   // ViewHolder
   private class ContactHolder extends RecyclerView.ViewHolder {
 
     private TextView mNameTextView;
-    private TextView mPhoneNumberTextView;
+    private TextView mCellTextView;
     private Contact mContact;
 
     public ContactHolder(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent) {
       super(inflater.inflate(R.layout.list_item_contact, parent, false));
       mNameTextView = itemView.findViewById(R.id.contact_name);
-      mPhoneNumberTextView = itemView.findViewById(R.id.contact_phone_number);
+      mCellTextView = itemView.findViewById(R.id.contact_cell);
     }
 
     public void bind(Contact contact) {
       mContact = contact;
-      String name = "" + contact.getName();
+      String name = "" + mContact.getName();
 
       mNameTextView.setText(name);
-      mPhoneNumberTextView.setText(contact.getCell());
+      mCellTextView.setText(contact.getCell());
     }
   }
 
