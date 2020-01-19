@@ -8,12 +8,10 @@ import androidx.fragment.app.Fragment;
 public class ContactListActivity extends SingleFragmentActivity {
 
   public static final String TAG = ContactListActivity.class.getSimpleName();
-  private Fragment mFragment;
 
   @Override
   protected Fragment createFragment() {
-    mFragment = new ContactListFragment();
-    return mFragment;
+    return new ContactListFragment();
   }
 
   public static final String EXTRA_CONTACT_NAME =
