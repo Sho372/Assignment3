@@ -25,7 +25,6 @@ public class ContactAddFragment extends Fragment {
 
   private EditText mNameEditText;
   private EditText mCellEditText;
-  private Button mSubmitButton;
   private String mName;
   private String mCell;
 
@@ -75,8 +74,8 @@ public class ContactAddFragment extends Fragment {
           }
         });
 
-    mSubmitButton = view.findViewById(R.id.button_submit);
-    mSubmitButton.setOnClickListener(
+    Button submitButton = view.findViewById(R.id.button_submit);
+    submitButton.setOnClickListener(
         new View.OnClickListener() {
           @Override
           public void onClick(View v) {
